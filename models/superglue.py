@@ -40,6 +40,7 @@
 # --------------------------------------------------------------------*/
 # %BANNER_END%
 
+import os
 from copy import deepcopy
 from pathlib import Path
 from typing import List, Tuple
@@ -195,7 +196,6 @@ class SuperGlue(nn.Module):
 
     """
     default_config = {
-        'sg_path': None,
         'descriptor_dim': 256,
         'weights': 'indoor',
         'keypoint_encoder': [32, 64, 128, 256],
@@ -222,7 +222,8 @@ class SuperGlue(nn.Module):
         self.register_parameter('bin_score', bin_score)
 
         assert self.config['weights'] in ['indoor', 'outdoor']
-        path = Path(__file__).parent if self.config['ws_path'] == None else Path(self.config['ws_path'])
+
+        path = os.path.dirname(os.path.abspath(__file__))
         path = path / 'weights/superglue_{}.pth'.format(self.config['weights'])
         self.load_state_dict(torch.load(str(path)))
         print('Loaded SuperGlue model (\"{}\" weights)'.format(
